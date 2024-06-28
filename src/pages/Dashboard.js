@@ -1,54 +1,37 @@
 import React from "react";
-import { Link, Routes, Route } from "react-router-dom";
-import {
-  AppBar,
-  Toolbar,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Box,
-} from "@mui/material";
-import Board from "../components/Dashboard/Board";
-import Analytics from "../components/Dashboard/Analytics";
-import Settings from "../components/Dashboard/Setting";
+import { Box, Typography, List, ListItem, ListItemText } from "@mui/material";
+import { Link, Outlet } from "react-router-dom";
+import logo from "../assets/logo.png"; // Add your logo image path here
 
 const Dashboard = () => {
-  const drawerWidth = 240;
-
   return (
-    <Box sx={{ display: "flex" }}>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
+    <Box display="flex" height="100vh">
+      <Box
+        width="250px"
+        bgcolor="#f4f4f4"
+        p={2}
+        display="flex"
+        flexDirection="column"
+        justifyContent="flex-start"
       >
-        <Toolbar />
+        <Box display="flex" alignItems="center" mb={4}>
+          <img src={logo} alt="logo" style={{ width: 40, marginRight: 10 }} />
+          <Typography variant="h6">App</Typography>
+        </Box>
         <List>
-          <ListItem button component={Link} to="/dashboard/board">
+          <ListItem button component={Link} to="board">
             <ListItemText primary="Board" />
           </ListItem>
-          <ListItem button component={Link} to="/dashboard/analytics">
+          <ListItem button component={Link} to="analytics">
             <ListItemText primary="Analytics" />
           </ListItem>
-          <ListItem button component={Link} to="/dashboard/settings">
+          <ListItem button component={Link} to="settings">
             <ListItemText primary="Settings" />
           </ListItem>
         </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        <Routes>
-          <Route path="board" element={<Board />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="settings" element={<Settings />} />
-        </Routes>
+      </Box>
+      <Box flex={1} p={2}>
+        <Outlet />
       </Box>
     </Box>
   );

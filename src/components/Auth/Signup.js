@@ -1,58 +1,54 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Container, TextField, Button, Typography, Box } from "@mui/material";
+import React from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSignup = (e) => {
-    e.preventDefault();
-    // Implement signup logic here
-    navigate("/login");
-  };
-
   return (
-    <Container>
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      height="100vh"
+      padding={4}
+    >
       <Typography variant="h4" gutterBottom>
         Sign Up
       </Typography>
-      <Box component="form" onSubmit={handleSignup} noValidate sx={{ mt: 1 }}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Email Address"
-          name="email"
-          autoComplete="email"
-          autoFocus
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="new-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+      <TextField label="Name" variant="outlined" fullWidth margin="normal" />
+      <TextField label="Email" variant="outlined" fullWidth margin="normal" />
+      <TextField
+        label="Password"
+        type="password"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
+      <Button variant="contained" color="primary" fullWidth>
+        Sign Up
+      </Button>
+      <Typography
+        variant="body1"
+        sx={{ marginTop: "16px", textAlign: "center" }}
+      >
+        Already have an account?
+        <Box
+          component={Link}
+          to="/"
+          sx={{
+            display: "block",
+            marginTop: "8px",
+            backgroundColor: "#1976d2",
+            color: "white",
+            padding: "8px 16px",
+            borderRadius: "4px",
+            textDecoration: "none",
+          }}
         >
-          Sign Up
-        </Button>
-      </Box>
-    </Container>
+          Login
+        </Box>
+      </Typography>
+    </Box>
   );
 };
 

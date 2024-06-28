@@ -10,9 +10,17 @@ import {
   Collapse,
   Checkbox,
   FormControlLabel,
+  Modal,
+  Button,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { DatePicker, LocalizationProvider } from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { format } from "date-fns";
 
 const TaskCard = ({ title, dueDate }) => {
@@ -114,6 +122,64 @@ const Board = () => {
   const currentDate = new Date();
   const formattedDate = format(currentDate, "do MMMM yyyy");
 
+  const [open, setOpen] = useState(false);
+  const [newTask, setNewTask] = useState("");
+  const [priority, setPriority] = useState("");
+  const [assignee, setAssignee] = useState("");
+  const [dueDate, setDueDate] = useState(currentDate);
+  const [checklist, setChecklist] = useState([
+    { id: 1, value: "", checked: false },
+  ]);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleTaskChange = (e) => {
+    setNewTask(e.target.value);
+  };
+
+  const handlePriorityChange = (value) => {
+    setPriority(value);
+  };
+
+  const handleAssigneeChange = (e) => {
+    setAssignee(e.target.value);
+  };
+
+  const handleChecklistChange = (id, value) => {
+    setChecklist(
+      checklist.map((item) => (item.id === id ? { ...item, value } : item))
+    );
+  };
+
+  const handleChecklistCheck = (id) => {
+    setChecklist(
+      checklist.map((item) =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
+  };
+
+  const handleAddChecklistItem = () => {
+    const newItem = { id: checklist.length + 1, value: "", checked: false };
+    setChecklist([...checklist, newItem]);
+  };
+
+  const handleDeleteChecklistItem = (id) => {
+    setChecklist(checklist.filter((item) => item.id !== id));
+  };
+
+  const handleAddTask = () => {
+    console.log({
+      newTask,
+      priority,
+      assignee,
+      dueDate,
+      checklist,
+    });
+    handleClose();
+  };
+
   return (
     <Box>
       <Box
@@ -129,24 +195,157 @@ const Board = () => {
         Board
       </Typography>
       <Grid container spacing={2}>
-        {sections.map((section) => (
+        {sections.map((section, index) => (
           <Grid item xs={12} sm={6} md={3} key={section}>
             <Box
               sx={{
                 backgroundColor: "#c7bfbf",
                 padding: "16px",
                 borderRadius: "8px",
+                position: "relative",
               }}
             >
               <Typography variant="h5" sx={{ marginBottom: "16px" }}>
                 {section}
               </Typography>
+              {section === "To-Do" && (
+                <IconButton
+                  sx={{ position: "absolute", top: "16px", right: "16px" }}
+                  onClick={handleOpen}
+                >
+                  <AddIcon />
+                </IconButton>
+              )}
               <TaskCard title="Task 1" dueDate={currentDate} />
               <TaskCard title="Task 2" dueDate={currentDate} />
             </Box>
           </Grid>
         ))}
       </Grid>
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="add-task-modal"
+        aria-describedby="add-task-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "8px",
+          }}
+        >
+          <Typography
+            id="add-task-modal"
+            variant="h6"
+            component="h2"
+            gutterBottom
+          >
+            Add New Task
+          </Typography>
+          <TextField
+            label="Title"
+            placeholder="Enter Task Title"
+            variant="outlined"
+            fullWidth
+            value={newTask}
+            onChange={handleTaskChange}
+            margin="normal"
+          />
+          <Box display="flex" justifyContent="space-between" mb={2}>
+            <Button
+              variant={priority === "high" ? "contained" : "outlined"}
+              color="error"
+              onClick={() => handlePriorityChange("high")}
+              sx={{ flexGrow: 1, marginRight: "4px" }}
+            >
+              High
+            </Button>
+            <Button
+              variant={priority === "moderate" ? "contained" : "outlined"}
+              color="primary"
+              onClick={() => handlePriorityChange("moderate")}
+              sx={{ flexGrow: 1, marginRight: "4px", marginLeft: "4px" }}
+            >
+              Moderate
+            </Button>
+            <Button
+              variant={priority === "low" ? "contained" : "outlined"}
+              color="success"
+              onClick={() => handlePriorityChange("low")}
+              sx={{ flexGrow: 1, marginLeft: "4px" }}
+            >
+              Low
+            </Button>
+          </Box>
+          <TextField
+            label="Assign To"
+            placeholder="Assignee"
+            variant="outlined"
+            fullWidth
+            value={assignee}
+            onChange={handleAssigneeChange}
+            margin="normal"
+          />
+          <Box sx={{ marginBottom: "16px" }}>
+            <Typography variant="body1" gutterBottom>
+              Checklist
+            </Typography>
+            {checklist.map((item, index) => (
+              <Box key={item.id} display="flex" alignItems="center" mb={1}>
+                <Checkbox
+                  checked={item.checked}
+                  onChange={() => handleChecklistCheck(item.id)}
+                />
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  value={item.value}
+                  onChange={(e) =>
+                    handleChecklistChange(item.id, e.target.value)
+                  }
+                  margin="normal"
+                  placeholder={`Item ${index + 1}`}
+                />
+                <IconButton onClick={() => handleDeleteChecklistItem(item.id)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            ))}
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={handleAddChecklistItem}
+            >
+              Add Item
+            </Button>
+          </Box>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Due Date"
+              value={dueDate}
+              onChange={(newValue) => setDueDate(newValue)}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+          </LocalizationProvider>
+          <Box display="flex" justifyContent="space-between" mt={2}>
+            <Button variant="outlined" color="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" onClick={handleAddTask}>
+              Save
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };

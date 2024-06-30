@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -15,11 +15,8 @@ import {
   TextField,
   Autocomplete,
 } from "@mui/material";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { format } from "date-fns";
-// import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-// import dayjs from "dayjs";
-
 const emailOptions = [
   "abhi@mai.com",
   "divya@mail.com",
@@ -28,19 +25,69 @@ const emailOptions = [
   "akds@mail.com",
 ];
 
-const TaskCard = ({ title, dueDate }) => {
+const TaskCard = ({ priority, title, list, dueDate }) => {
   const [expanded, setExpanded] = useState(false);
-  const [checkedItems, setCheckedItems] = useState(Array(10).fill(false));
-
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+  const t = [
+    {
+      _id: "668146cff4390ea77339a845",
+      newTask: "task3",
+      priority: "high",
+      assignee: "1@mail.com",
+      assigner: "agssh@mail.com",
+      checklist: [
+        {
+          id: 1,
+          value: "bnm,",
+          checked: false,
+          _id: "668146cff4390ea77339a846",
+        },
+      ],
+      currDueDate: "2024-06-01T00:00:00.000Z",
+      __v: 0,
+    },
+    {
+      _id: "668146d5f4390ea77339a848",
+      newTask: "task1",
+      priority: "high",
+      assignee: "1@mail.com",
+      assigner: "agssh@mail.com",
+      checklist: [
+        {
+          id: 1,
+          value: "bnmkj,",
+          checked: false,
+          _id: "668146d5f4390ea77339a849",
+        },
+      ],
+      currDueDate: "2024-06-01T00:00:00.000Z",
+      __v: 0,
+    },
+    {
+      _id: "668146d8f4390ea77339a84b",
+      newTask: "task4",
+      priority: "high",
+      assignee: "1@mail.com",
+      assigner: "agssh@mail.com",
+      checklist: [
+        {
+          id: 1,
+          value: "bnm,",
+          checked: false,
+          _id: "668146d8f4390ea77339a84c",
+        },
+      ],
+      currDueDate: "2024-06-01T00:00:00.000Z",
+      __v: 0,
+    },
+  ];
+  const tt = [];
+  t.forEach((v, i) => tt.push(v.checklist[0].value));
+  const [checkedItems, setCheckedItems] = useState([...tt]);
 
-  const handleCheckboxChange = (index) => {
-    const updatedCheckedItems = [...checkedItems];
-    updatedCheckedItems[index] = !updatedCheckedItems[index];
-    setCheckedItems(updatedCheckedItems);
-  };
+  const [checked, setChecked] = useState(-1);
 
   return (
     <Card sx={{ marginBottom: "16px" }}>
@@ -48,9 +95,10 @@ const TaskCard = ({ title, dueDate }) => {
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h5">{title}</Typography>
           <IconButton onClick={handleExpandClick}>
-            {expanded ? <span>less </span> : <span>more </span>}
+            {expanded ? <span>- </span> : <span>+ </span>}
           </IconButton>
         </Box>
+        <Box variant="h6">Checklist</Box>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box
             sx={{
@@ -60,9 +108,9 @@ const TaskCard = ({ title, dueDate }) => {
               marginTop: "8px",
             }}
           >
-            {Array.from({ length: 10 }, (_, index) => (
+            {checkedItems.map((v, i) => (
               <Box
-                key={index}
+                key={i}
                 sx={{
                   border: "1px solid #ccc",
                   borderRadius: "8px",
@@ -73,11 +121,11 @@ const TaskCard = ({ title, dueDate }) => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={checkedItems[index]}
-                      onChange={() => handleCheckboxChange(index)}
+                      checked={i == checked}
+                      onChange={() => setChecked(i)}
                     />
                   }
-                  label={`Option ${index + 1}`}
+                  label={v}
                   sx={{ display: "block", margin: "4px 0" }}
                 />
               </Box>
@@ -114,8 +162,45 @@ const TaskCard = ({ title, dueDate }) => {
               borderRadius: "4px",
             }}
           >
-            {format(dueDate.toDate(), "dd MMM yyyy")}
+            {format(dueDate, "dd MMM yyyy")}
           </Typography>
+        </Box>
+        <Box display="flex" alignItems="center">
+          <Button
+            // variant="body1"
+            sx={{
+              backgroundColor: "#decdcc",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              margin: "1px",
+            }}
+          >
+            InProgress
+          </Button>
+          <Button
+            // variant=""
+            sx={{
+              backgroundColor: "#decdcc",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              margin: "1px",
+            }}
+          >
+            To do
+          </Button>
+          <Button
+            // variant="body1"
+            sx={{
+              backgroundColor: "#decdcc",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+            }}
+          >
+            Done
+          </Button>
         </Box>
       </CardActions>
     </Card>
@@ -125,16 +210,261 @@ const TaskCard = ({ title, dueDate }) => {
 const Board = () => {
   const sections = ["Backlog", "To-Do", "In-Progress", "Done"];
   const currentDate = new Date();
-  const formattedDate = format("22/22/2222");
-
+  const formattedDate = format(currentDate, "do MMMM yyyy");
   const [open, setOpen] = useState(false);
   const [newTask, setNewTask] = useState("");
   const [priority, setPriority] = useState("");
   const [assignee, setAssignee] = useState("");
   const [dueDate, setDueDate] = useState(currentDate);
+  const [currDueDate, setCurrDueDate] = useState(new Date());
   const [checklist, setChecklist] = useState([
     { id: 1, value: "", checked: false },
   ]);
+
+  const [todo, setTodo] = useState([]);
+  const [inpro, setInpro] = useState([]);
+  const [done, setDone] = useState([]);
+  const [back, setBack] = useState([]);
+
+  const getApiData =  () => {
+    const data = [
+      {
+        _id: "668156ab354bd4ccf9f2051c",
+        newTask: "taskah4h",
+        priority: "medium",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156ab354bd4ccf9f2051d",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "inprogress",
+        __v: 0,
+      },
+      {
+        _id: "668156bd354bd4ccf9f20521",
+        newTask: "taskah4h",
+        priority: "high",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156bd354bd4ccf9f20522",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "inprogress",
+        __v: 0,
+      },
+      {
+        _id: "668156c3354bd4ccf9f20524",
+        newTask: "taskah4h",
+        priority: "low",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156c3354bd4ccf9f20525",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "inprogress",
+        __v: 0,
+      },
+      {
+        _id: "668156cc354bd4ccf9f20527",
+        newTask: "taskah4h",
+        priority: "low",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156cc354bd4ccf9f20528",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "todo",
+        __v: 0,
+      },
+      {
+        _id: "668156d3354bd4ccf9f2052a",
+        newTask: "taskah4h",
+        priority: "high",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156d3354bd4ccf9f2052b",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "todo",
+        __v: 0,
+      },
+      {
+        _id: "668156d9354bd4ccf9f2052d",
+        newTask: "taskah4h",
+        priority: "medium",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156d9354bd4ccf9f2052e",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "todo",
+        __v: 0,
+      },
+      {
+        _id: "668156ea354bd4ccf9f20530",
+        newTask: "taskah4h",
+        priority: "medium",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156ea354bd4ccf9f20531",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "backlog",
+        __v: 0,
+      },
+      {
+        _id: "668156ef354bd4ccf9f20533",
+        newTask: "taskah4h",
+        priority: "low",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156ef354bd4ccf9f20534",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "backlog",
+        __v: 0,
+      },
+      {
+        _id: "668156f3354bd4ccf9f20536",
+        newTask: "taskah4h",
+        priority: "high",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "668156f3354bd4ccf9f20537",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "backlog",
+        __v: 0,
+      },
+      {
+        _id: "66815718354bd4ccf9f20543",
+        newTask: "taskah4h",
+        priority: "high",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "66815718354bd4ccf9f20544",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "done",
+        __v: 0,
+      },
+      {
+        _id: "6681571c354bd4ccf9f20546",
+        newTask: "taskah4h",
+        priority: "low",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "6681571c354bd4ccf9f20547",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "done",
+        __v: 0,
+      },
+      {
+        _id: "66815723354bd4ccf9f20549",
+        newTask: "taskah4h",
+        priority: "medium",
+        assignee: "1@mail.com",
+        assigner: "agssh@mail.com",
+        checklist: [
+          {
+            id: 1,
+            value: "bnm,",
+            checked: false,
+            _id: "66815723354bd4ccf9f2054a",
+          },
+        ],
+        currDueDate: "2024-06-01T00:00:00.000Z",
+        status: "done",
+        __v: 0,
+      },
+    ];
+    return data;
+  };
+
+  useEffect(() => {
+    const dddd = [];
+    const t = [];
+    const i = [];
+    const d = [];
+    const b = [];
+    dddd.forEach((v, i) => {
+      if (v.status == "todo") t.add(v);
+      if (v.status == "done") d.add(v);
+      if (v.status == "inprogress") i.add(v);
+      if (v.status == "backlog") b.add(v);
+    });
+    setTodo(t);
+    setBack(b);
+    setDone(d);
+    setInpro(i);
+  },[]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -179,14 +509,10 @@ const Board = () => {
       newTask,
       priority,
       assignee,
-      dueDate: dueDate.toDate(),
       checklist,
+      currDueDate,
     });
     handleClose();
-  };
-
-  const handleDueDateChange = (newDate) => {
-    setDueDate(newDate);
   };
 
   return (
@@ -225,8 +551,21 @@ const Board = () => {
                   +
                 </IconButton>
               )}
-              <TaskCard title="Task 1" dueDate={currentDate} />
-              <TaskCard title="Task 2" dueDate={currentDate} />
+              {/* <TaskCard title="Task 1" dueDate={currentDate} /> */}
+              {/* <TaskCard title="Task 2" dueDate={currentDate} /> */}
+              
+              {section=="Backlog" && (
+                {back.map((v,i)=><TaskCard  priority={v.priority} title="Hero Task" list={v.checklist}   dueDate={currentDate} />)}
+              )}
+              {section=="To-Do" && (
+                {todo.map((v,i)=><TaskCard  priority={v.priority} title="Hero Task" list={v.checklist}  dueDate={currentDate} />)}
+              )}
+              {section=="In-Progress" && (
+                {inpro.map((v,i)=><TaskCard  priority={v.priority} title="Hero Task" list={v.checklist}   dueDate={currentDate} />)}
+              )}
+              {section=="Done" && (
+                {done.map((v,i)=><TaskCard  priority={v.priority} title="Hero Task" list={v.checklist}   dueDate={currentDate} />)}
+              )}
             </Box>
           </Grid>
         ))}
@@ -345,6 +684,15 @@ const Board = () => {
           </Box>
 
           <Box display="flex" justifyContent="space-between" mt={2}>
+            <Button for="date" variant="outlined">
+              Due date
+            </Button>
+            <input
+              type="date"
+              id="currDueDate"
+              name="currDueDate"
+              onChange={(e) => setCurrDueDate(e.target.value)}
+            />
             <Button variant="outlined" onClick={handleClose}>
               Cancel
             </Button>

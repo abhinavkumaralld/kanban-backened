@@ -34,51 +34,55 @@ const TaskCard = ({ priority, title, list, dueDate, changeStatus, row }) => {
   return (
     <Card sx={{ margin: "16px" }}>
       <CardContent>
-        {priority == "medium" && (
-          <Button
-            // variant="body1"
-            sx={{
-              backgroundColor: "#1857de",
-              color: "white",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              margin: "1px",
-              fontSize: "0.6rem",
-            }}
-          >
-            medium priority
-          </Button>
-        )}
-        {priority == "low" && (
-          <Button
-            // variant="body1"
-            sx={{
-              backgroundColor: "#18de1c",
-              color: "white",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              margin: "1px",
-              fontSize: "0.6rem",
-            }}
-          >
-            low priority
-          </Button>
-        )}
-        {priority == "high" && (
-          <Button
-            // variant="body1"
-            sx={{
-              backgroundColor: "#de1829",
-              color: "white",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              margin: "1px",
-              fontSize: "0.6rem",
-            }}
-          >
-            high priority
-          </Button>
-        )}
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          {priority == "medium" && (
+            <Button
+              // variant="body1"
+              sx={{
+                backgroundColor: "#1857de",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                margin: "1px",
+                fontSize: "0.6rem",
+              }}
+            >
+              medium priority
+            </Button>
+          )}
+          {priority == "low" && (
+            <Button
+              // variant="body1"
+              sx={{
+                backgroundColor: "#18de1c",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                margin: "1px",
+                fontSize: "0.6rem",
+              }}
+            >
+              low priority
+            </Button>
+          )}
+          {priority == "high" && (
+            <Button
+              // variant="body1"
+              sx={{
+                backgroundColor: "#de1829",
+                color: "white",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                margin: "1px",
+                fontSize: "0.6rem",
+              }}
+            >
+              high priority
+            </Button>
+          )}
+
+          <Button>...</Button>
+        </Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h5">{title}</Typography>
           <IconButton onClick={handleExpandClick}>

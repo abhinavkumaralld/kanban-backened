@@ -32,44 +32,53 @@ const TaskCard = ({ priority, title, list, dueDate, changeStatus, row }) => {
   const [checked, setChecked] = useState(-1);
   // console.log("ddd=", priority, title, list, dueDate, checkedItems);
   return (
-    <Card sx={{ marginBottom: "16px" }}>
-      {priority == "medium" && (
-        <Button
-          // variant="body1"
-          sx={{
-            backgroundColor: "#1857de",
-            color: "white",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            margin: "1px",
-          }}
-        ></Button>
-      )}
-      {priority == "low" && (
-        <Button
-          // variant="body1"
-          sx={{
-            backgroundColor: "#18de1c",
-            color: "white",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            margin: "1px",
-          }}
-        ></Button>
-      )}
-      {priority == "high" && (
-        <Button
-          // variant="body1"
-          sx={{
-            backgroundColor: "#de1829",
-            color: "white",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            margin: "1px",
-          }}
-        ></Button>
-      )}
+    <Card sx={{ margin: "16px" }}>
       <CardContent>
+        {priority == "medium" && (
+          <Button
+            // variant="body1"
+            sx={{
+              backgroundColor: "#1857de",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              margin: "1px",
+              fontSize: "0.6rem",
+            }}
+          >
+            medium priority
+          </Button>
+        )}
+        {priority == "low" && (
+          <Button
+            // variant="body1"
+            sx={{
+              backgroundColor: "#18de1c",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              margin: "1px",
+              fontSize: "0.6rem",
+            }}
+          >
+            low priority
+          </Button>
+        )}
+        {priority == "high" && (
+          <Button
+            // variant="body1"
+            sx={{
+              backgroundColor: "#de1829",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              margin: "1px",
+              fontSize: "0.6rem",
+            }}
+          >
+            high priority
+          </Button>
+        )}
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h5">{title}</Typography>
           <IconButton onClick={handleExpandClick}>
@@ -127,6 +136,7 @@ const TaskCard = ({ priority, title, list, dueDate, changeStatus, row }) => {
               padding: "4px 8px",
               borderRadius: "4px",
               marginRight: "8px",
+              fontSize: "0.7rem",
             }}
           >
             Due Date:
@@ -138,6 +148,7 @@ const TaskCard = ({ priority, title, list, dueDate, changeStatus, row }) => {
               color: "white",
               padding: "4px 8px",
               borderRadius: "4px",
+              fontSize: "0.7rem",
             }}
           >
             {format(dueDate, "dd MMM yyyy")}
@@ -148,63 +159,71 @@ const TaskCard = ({ priority, title, list, dueDate, changeStatus, row }) => {
           alignItems="center"
           sx={{ marginTop: "5px", marginRight: "10px" }}
         >
-          <Button
-            // variant="body1"
-            onClick={() => changeStatus("inprogress", row)}
-            sx={{
-              backgroundColor: "#decdcc",
-              color: "black",
-              padding: "4px 8px",
-              borderRadius: "4px",
-
-              margin: "1px",
-            }}
-          >
-            InProgress
-          </Button>
-          <Button
-            // variant=""
-            onClick={() => changeStatus("todo", row)}
-            sx={{
-              backgroundColor: "#decdcc",
-              color: "black",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              margin: "1px",
-            }}
-          >
-            To do
-          </Button>
-        </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          sx={{ marginTop: "5px", marginRight: "10px" }}
-        >
-          <Button
-            // variant="body1"
-            onClick={() => changeStatus("done", row)}
-            sx={{
-              backgroundColor: "#decdcc",
-              color: "black",
-              padding: "4px 8px",
-              borderRadius: "4px",
-            }}
-          >
-            Done
-          </Button>
-          <Button
-            // variant="body1"
-            onClick={() => changeStatus("backlog", row)}
-            sx={{
-              backgroundColor: "#decdcc",
-              color: "black",
-              padding: "4px 8px",
-              borderRadius: "4px",
-            }}
-          >
-            backlog
-          </Button>
+          {row.status != "inprogress" && (
+            <Button
+              // variant="body1"
+              // size="small"
+              onClick={() => changeStatus("inprogress", row)}
+              sx={{
+                backgroundColor: "#decdcc",
+                color: "black",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "0.5rem",
+                margin: "1px",
+              }}
+            >
+              InProgress
+            </Button>
+          )}
+          {row.status != "todo" && (
+            <Button
+              // variant=""
+              onClick={() => changeStatus("todo", row)}
+              sx={{
+                backgroundColor: "#decdcc",
+                color: "black",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                margin: "1px",
+                fontSize: "0.5rem",
+              }}
+            >
+              To do
+            </Button>
+          )}
+          {row.status != "done" && (
+            <Button
+              // variant="body1"
+              onClick={() => changeStatus("done", row)}
+              sx={{
+                backgroundColor: "#decdcc",
+                color: "black",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "0.5rem",
+                margin: "2px",
+              }}
+            >
+              Done
+            </Button>
+          )}
+          {row.status != "backlog" && (
+            <Button
+              // variant="body1"
+              onClick={() => changeStatus("backlog", row)}
+              sx={{
+                backgroundColor: "#decdcc",
+                color: "black",
+                padding: "4px 8px",
+                fontSize: "0.5rem",
+                borderRadius: "4px",
+                margin: "2px",
+              }}
+            >
+              backlog
+            </Button>
+          )}
         </Box>
       </CardActions>
     </Card>
@@ -408,12 +427,12 @@ const Board = () => {
             <Box
               sx={{
                 backgroundColor: "#c7bfbf",
-                padding: "16px",
+                padding: "6px",
                 borderRadius: "8px",
                 position: "relative",
               }}
             >
-              <Typography variant="h5" sx={{ marginBottom: "16px" }}>
+              <Typography variant="h6" sx={{ marginBottom: "16px" }}>
                 {section}
               </Typography>
               {section === "To-Do" && (

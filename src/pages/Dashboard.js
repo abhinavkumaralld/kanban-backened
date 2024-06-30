@@ -7,7 +7,7 @@ const Dashboard = () => {
   return (
     <Box display="flex" height="100vh">
       <Box
-        width="250px"
+        width="200px"
         bgcolor="#f4f4f4"
         p={2}
         display="flex"

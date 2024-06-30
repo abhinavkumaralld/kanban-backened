@@ -15,11 +15,10 @@ import {
   TextField,
   Autocomplete,
 } from "@mui/material";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { format } from "date-fns";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+// import dayjs from "dayjs";
 
 const emailOptions = [
   "abhi@mai.com",
@@ -115,7 +114,7 @@ const TaskCard = ({ title, dueDate }) => {
               borderRadius: "4px",
             }}
           >
-            {format(dueDate, "dd MMM yyyy")}
+            {format(dueDate.toDate(), "dd MMM yyyy")}
           </Typography>
         </Box>
       </CardActions>
@@ -126,14 +125,13 @@ const TaskCard = ({ title, dueDate }) => {
 const Board = () => {
   const sections = ["Backlog", "To-Do", "In-Progress", "Done"];
   const currentDate = new Date();
-  const formattedDate = format(currentDate, "do MMMM yyyy");
+  const formattedDate = format("22/22/2222");
 
   const [open, setOpen] = useState(false);
   const [newTask, setNewTask] = useState("");
   const [priority, setPriority] = useState("");
   const [assignee, setAssignee] = useState("");
   const [dueDate, setDueDate] = useState(currentDate);
-  const [currDueDate, setCurrDueDate] = useState(new Date());
   const [checklist, setChecklist] = useState([
     { id: 1, value: "", checked: false },
   ]);
@@ -181,10 +179,14 @@ const Board = () => {
       newTask,
       priority,
       assignee,
+      dueDate: dueDate.toDate(),
       checklist,
-      currDueDate,
     });
     handleClose();
+  };
+
+  const handleDueDateChange = (newDate) => {
+    setDueDate(newDate);
   };
 
   return (
@@ -343,15 +345,6 @@ const Board = () => {
           </Box>
 
           <Box display="flex" justifyContent="space-between" mt={2}>
-            <Button for="date" variant="outlined">
-              Due date
-            </Button>
-            <input
-              type="date"
-              id="currDueDate"
-              name="currDueDate"
-              onChange={(e) => setCurrDueDate(e.target.value)}
-            />
             <Button variant="outlined" onClick={handleClose}>
               Cancel
             </Button>

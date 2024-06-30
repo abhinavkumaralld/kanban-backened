@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, TextField, Button, Typography, Box } from "@mui/material";
-
+import axios from "axios";
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -9,8 +9,27 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Implement login logic here
-    navigate("/dashboard");
+    console.log("login",email,password)
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+         
+          email: email,
+          password:password,
+        },
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      localStorage.setItem("email", response?.data?.email);
+      localStorage.setItem("name", response?.data?.name);
+      localStorage.setItem("token", response?.data?.token);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error posting data:", error);
+      navigate("/");
+    }
   };
 
   return (

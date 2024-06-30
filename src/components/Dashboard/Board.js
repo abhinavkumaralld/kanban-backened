@@ -13,15 +13,21 @@ import {
   Modal,
   Button,
   TextField,
-  MenuItem,
+  Autocomplete,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { format } from "date-fns";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
+const emailOptions = [
+  "abhi@mai.com",
+  "divya@mail.com",
+  "abhinavKumar@mail.com",
+  "divyasingh@mail.com",
+  "akds@mail.com",
+];
 
 const TaskCard = ({ title, dueDate }) => {
   const [expanded, setExpanded] = useState(false);
@@ -43,7 +49,7 @@ const TaskCard = ({ title, dueDate }) => {
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h5">{title}</Typography>
           <IconButton onClick={handleExpandClick}>
-            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            {expanded ? <span>less </span> : <span>more </span>}
           </IconButton>
         </Box>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -127,6 +133,7 @@ const Board = () => {
   const [priority, setPriority] = useState("");
   const [assignee, setAssignee] = useState("");
   const [dueDate, setDueDate] = useState(currentDate);
+  const [currDueDate, setCurrDueDate] = useState(new Date());
   const [checklist, setChecklist] = useState([
     { id: 1, value: "", checked: false },
   ]);
@@ -142,8 +149,8 @@ const Board = () => {
     setPriority(value);
   };
 
-  const handleAssigneeChange = (e) => {
-    setAssignee(e.target.value);
+  const handleAssigneeChange = (event, newValue) => {
+    setAssignee(newValue);
   };
 
   const handleChecklistChange = (id, value) => {
@@ -174,8 +181,8 @@ const Board = () => {
       newTask,
       priority,
       assignee,
-      dueDate,
       checklist,
+      currDueDate,
     });
     handleClose();
   };
@@ -213,7 +220,7 @@ const Board = () => {
                   sx={{ position: "absolute", top: "16px", right: "16px" }}
                   onClick={handleOpen}
                 >
-                  <AddIcon />
+                  +
                 </IconButton>
               )}
               <TaskCard title="Task 1" dueDate={currentDate} />
@@ -286,14 +293,20 @@ const Board = () => {
               Low
             </Button>
           </Box>
-          <TextField
-            label="Assign To"
-            placeholder="Assignee"
-            variant="outlined"
-            fullWidth
+          <Autocomplete
+            options={emailOptions}
             value={assignee}
             onChange={handleAssigneeChange}
-            margin="normal"
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Assign To"
+                placeholder="Assignee"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              />
+            )}
           />
           <Box sx={{ marginBottom: "16px" }}>
             <Typography variant="body1" gutterBottom>
@@ -306,41 +319,43 @@ const Board = () => {
                   onChange={() => handleChecklistCheck(item.id)}
                 />
                 <TextField
-                  variant="outlined"
-                  fullWidth
                   value={item.value}
                   onChange={(e) =>
                     handleChecklistChange(item.id, e.target.value)
                   }
-                  margin="normal"
-                  placeholder={`Item ${index + 1}`}
+                  placeholder="Checklist Item"
+                  variant="outlined"
+                  fullWidth
+                  sx={{ marginRight: "8px" }}
                 />
                 <IconButton onClick={() => handleDeleteChecklistItem(item.id)}>
-                  <DeleteIcon />
+                  -
                 </IconButton>
               </Box>
             ))}
             <Button
               variant="outlined"
-              startIcon={<AddIcon />}
               onClick={handleAddChecklistItem}
+              sx={{ width: "100%", marginTop: "8px" }}
             >
-              Add Item
+              Add New
             </Button>
           </Box>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Due Date"
-              value={dueDate}
-              onChange={(newValue) => setDueDate(newValue)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            />
-          </LocalizationProvider>
+
           <Box display="flex" justifyContent="space-between" mt={2}>
-            <Button variant="outlined" color="secondary" onClick={handleClose}>
+            <Button for="date" variant="outlined">
+              Due date
+            </Button>
+            <input
+              type="date"
+              id="currDueDate"
+              name="currDueDate"
+              onChange={(e) => setCurrDueDate(e.target.value)}
+            />
+            <Button variant="outlined" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="contained" color="primary" onClick={handleAddTask}>
+            <Button variant="contained" onClick={handleAddTask}>
               Save
             </Button>
           </Box>
